@@ -190,6 +190,10 @@ def on_progress(stream, chunk, bytes_remaining):
 
 
 def Download():
+    # select the optimal location for
+    # saving file's
+    download_Folder = download_Path.get()
+
     bar['value'] = 0
     root.update()
     if "list" in video_Link.get():
@@ -200,7 +204,7 @@ def Download():
             yt = YouTube(link)
             if var.get() == "audio":
                 video = yt.streams.filter(only_audio=True).first()
-                downloaded_file = video.download()
+                downloaded_file = video.download(download_Folder)
                 base, ext = os.path.splitext(downloaded_file)
 
                 new_file = base + '.mp3'
@@ -212,7 +216,7 @@ def Download():
             else:
                 d_video = yt.streams.filter(progressive=True, file_extension='mp4').order_by(
                     'resolution').desc().first()
-                d_video.download()
+                d_video.download(download_Folder)
 
             print(i + 1, ' Video is Downloaded.')
             bar['value'] += 100 / len(PlayListLinks)
@@ -223,7 +227,7 @@ def Download():
     # getting user-input Youtube Link
     if var.get() == "audio only":
         video = YouTube(video_Link.get()).streams.filter(only_audio=True).first()
-        downloaded_file = video.download()
+        downloaded_file = video.download(download_Folder)
         base, ext = os.path.splitext(downloaded_file)
 
         new_file = base + '.mp3'
@@ -233,11 +237,9 @@ def Download():
         yt = YouTube(video_Link.get())
         resolution = var.get()
         yt.register_on_progress_callback(on_progress)
-        yt.streams.filter(res=resolution).first().download()
+        yt.streams.filter(res=resolution).first().download(download_Folder)
 
-    # select the optimal location for
-    # saving file's
-    download_Folder = download_Path.get()
+
 
     # Creating object of YouTube()
 
